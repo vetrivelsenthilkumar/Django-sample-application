@@ -6,6 +6,9 @@ from rest_framework import status
 from .models import Student 
 from .serializers import StudentSerializer 
 from django.shortcuts import get_object_or_404  
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from knox.auth import AuthToken
+from .serializers import RegisterSerilizer
 
 # Create your views here.
 
@@ -51,4 +54,51 @@ def GetStudentById(request, pk):
         return Response({'status': 'student deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
 
 
+@api_view(['POST'])
+def login_api(request):
+    serializer = AuthTokenSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    user = serializer.validated_data['user']
 
+    _, token = AuthToken.objects.create(user)
+
+    return Response({
+        'user_info': {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+        },
+        'token': token
+    })
+
+
+@api_view(['GET'])
+def get_user_data(request):
+    user = request.user
+    if user.is_authenticated:
+        return Response({
+            'user_info': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+            },
+        })
+
+    return Response({'error': 'not authenticated'}, status=400)
+
+@api_view(['POST'])
+def register_api(request):
+    serializer= RegisterSerilizer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+
+    user= serializer.save()
+    _, token= AuthToken.objects.create(user)
+
+    return Response({
+        'user_info': {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+        },
+        'token': token
+    })
