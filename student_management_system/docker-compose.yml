@@ -8,8 +8,10 @@ services:
       POSTGRES_USER: pgadmin
       POSTGRES_PASSWORD: welcome
       POSTGRES_HOST: localhost
+
     volumes:
       - db-data:/var/lib/postgresql/data
+
   web:
     build:
       context: .
@@ -24,7 +26,7 @@ services:
       - db
     links:
       - db
-
+ 
 volumes:
   db-data:
  

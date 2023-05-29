@@ -82,7 +82,7 @@ DATABASES = {
        'NAME': 'testdb',
        'USER': 'pgadmin',
        'PASSWORD': 'welcome',
-       'HOST': 'localhost',
+       'HOST': 'db',
        'PORT': '5432',
    }
 }
